@@ -1,366 +1,603 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="bn">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>𝐂𝐲𝐛𝐞𝐫 𝐈𝐧𝐬𝐢𝐝𝐞𝐫𝐬 𝐁𝐃</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <title>Cyber Insiders BD - Secure News Generator</title>
+    <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@500;600;700&family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
+
     <style>
         :root {
-            --bg: #030508;
-            --surface: rgba(15, 20, 28, 0.95);
-            --accent: #0052ff; /* Royal Blue */
-            --gold: #ffd700;  /* Gold */
-            --text: #e2e8f0;
-            --border: rgba(255, 255, 255, 0.1);
+            --news-red: #cc0000;
+            --news-dark-red: #7a0000;
+            --strip-dark: #0a0518;
+            --text-yellow: #ffee00;
+            --panel-bg: #13161c;
+            --accent-cyan: #00ffcc;
+            --fb-color: #1877f2;
+            --tg-color: #0088cc;
+            --admin-bg: #0f121a;
         }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
-        body { background: var(--bg); color: var(--text); overflow-x: hidden; }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
 
-        /* Gatekeeper (Pass/Join System) Overlay */
-        #authGate {
-            position: fixed; top:0; left:0; width:100%; height:100%;
-            background: #030508; z-index: 5000; display: flex;
-            align-items: center; justify-content: center; padding: 20px;
+        body {
+            font-family: 'Hind Siliguri', sans-serif;
+            background: #090a0f;
+            min-height: 100vh;
+            padding: 30px 15px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            color: #ffffff;
+            position: relative;
         }
-        .gate-card {
-            width: 100%; max-width: 400px; background: var(--surface);
-            border: 1px solid var(--gold); border-radius: 25px; padding: 30px 20px;
-            text-align: center; box-shadow: 0 0 30px rgba(0, 82, 255, 0.15);
-        }
-        .join-btn-group { display: flex; flex-direction: column; gap: 12px; margin: 25px 0; }
-        .btn-social {
-            padding: 14px; border-radius: 12px; text-decoration: none; color: #fff;
-            font-weight: bold; font-size: 13px; display: flex; align-items: center;
-            justify-content: center; gap: 10px; transition: 0.3s;
-        }
-        .btn-fb { background: #1877f2; box-shadow: 0 4px 15px rgba(24, 119, 242, 0.3); }
-        .btn-tg { background: #229ED9; box-shadow: 0 4px 15px rgba(34, 158, 217, 0.3); }
-        .btn-social.clicked { opacity: 0.6; background: #222 !important; border: 1px solid #444; }
-        
-        .pass-container { opacity: 0.3; pointer-events: none; transition: 0.4s; }
-        .pass-container.unlocked { opacity: 1; pointer-events: auto; }
 
-        /* Navbar */
-        .navbar {
-            position: sticky; top: 0; z-index: 1000;
-            background: rgba(5, 8, 10, 0.95); backdrop-filter: blur(10px);
-            padding: 12px 20px; display: flex; align-items: center; justify-content: space-between;
-            border-bottom: 1px solid var(--border);
+        /* 🔒 GATEWAY LOCK SCREEN OVERLAY */
+        #lock-screen {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(5, 6, 10, 0.98);
+            z-index: 9999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            backdrop-filter: blur(10px);
         }
-        .logo-box { display: flex; align-items: center; gap: 12px; cursor: pointer; }
-        .logo-box:hover .logo-text { text-shadow: 0 0 10px var(--gold); }
-        
-        /* New Image Logo Styles */
-        .logo-img-style {
-            width: 42px; height: 42px;
+
+        .lock-box {
+            background: var(--panel-bg);
+            border: 2px solid #222733;
+            border-radius: 16px;
+            padding: 40px 30px;
+            width: 100%;
+            max-width: 420px;
+            text-align: center;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.8);
+        }
+
+        .lock-logo-container {
+            width: 130px;
+            height: 130px;
+            margin: 0 auto 20px auto;
             border-radius: 50%;
-            border: 2px solid var(--gold);
-            box-shadow: 0 0 10px rgba(255, 215, 0, 0.4);
-            transition: 0.4s ease-in-out;
-            object-fit: cover;
+            border: 2px solid var(--accent-cyan);
+            box-shadow: 0 0 25px rgba(0, 255, 204, 0.4);
+            overflow: hidden;
+            background: #000;
         }
-        .gate-logo-style {
-            width: 90px; height: 90px;
+
+        .lock-logo-container img { width: 100%; height: 100%; object-fit: cover; }
+        .lock-box h3 { font-family: 'Inter', sans-serif; font-size: 1.4rem; color: var(--accent-cyan); margin-bottom: 8px; letter-spacing: 1px; text-transform: uppercase; }
+        .lock-box p { font-size: 13px; color: #8a99a8; margin-bottom: 25px; line-height: 1.5; }
+
+        .gate-buttons-stack { display: flex; flex-direction: column; gap: 15px; }
+        .gate-btn {
+            display: flex; align-items: center; justify-content: center; gap: 12px; padding: 16px; border-radius: 10px;
+            color: #ffffff; font-family: 'Inter', sans-serif; font-size: 14px; font-weight: 900; transition: all 0.3s ease;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.4); border: none; cursor: pointer; letter-spacing: 0.5px;
+        }
+        .gate-btn svg { width: 20px; height: 20px; fill: #ffffff; }
+        .gate-btn.fb { background: var(--fb-color); box-shadow: 0 6px 20px rgba(24, 119, 242, 0.3); }
+        .gate-btn.tg { background: var(--tg-color); box-shadow: 0 6px 20px rgba(0, 136, 204, 0.3); }
+        .gate-btn:hover { transform: translateY(-3px); filter: brightness(1.2); }
+
+        #password-section { display: none; margin-top: 25px; padding-top: 20px; border-top: 1px solid #222733; animation: fadeIn 0.5s ease; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        #password-section label { display: block; font-size: 11px; color: var(--accent-cyan); text-transform: uppercase; margin-bottom: 8px; font-weight: 700; }
+        .password-input-group { display: flex; gap: 10px; }
+        .password-input-group input { flex: 1; padding: 14px; background: #090a0f; border: 1px solid #2c3240; border-radius: 8px; color: #fff; font-size: 15px; outline: none; text-align: center; letter-spacing: 2px; }
+        .password-input-group input:focus { border-color: var(--accent-cyan); }
+        .verify-submit-btn { padding: 0 20px; background: var(--accent-cyan); color: #090a0f; border: none; border-radius: 8px; font-family: 'Inter', sans-serif; font-weight: 900; font-size: 13px; cursor: pointer; }
+        .error-msg { color: #ff3333; font-size: 12px; margin-top: 8px; display: none; font-weight: 600; }
+        
+        .dev-credit-tag { margin-top: 25px; font-family: 'Inter', sans-serif; font-size: 10px; color: #475166; letter-spacing: 2px; text-transform: uppercase; font-weight: 700; border-top: 1px dashed #222733; padding-top: 15px; }
+        .dev-credit-tag span { color: var(--accent-cyan); text-shadow: 0 0 8px rgba(0, 255, 204, 0.3); }
+
+        /* ── MAIN INTERFACE ── */
+        #main-app { display: none; width: 100%; max-width: 560px; }
+
+        .social-join-container { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 25px; width: 100%; }
+        .join-btn { display: flex; align-items: center; justify-content: center; gap: 10px; padding: 14px; border-radius: 10px; color: #ffffff; font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 700; text-decoration: none; transition: all 0.3s ease; box-shadow: 0 10px 20px rgba(0,0,0,0.3); }
+        .join-btn svg { width: 18px; height: 18px; fill: #ffffff; }
+        .join-btn.fb { background: var(--fb-color); }
+        .join-btn.tg { background: var(--tg-color); }
+
+        /* ── CONTROL DASHBOARD ── */
+        .control-panel { background: var(--panel-bg); border-radius: 16px; padding: 30px; width: 100%; box-shadow: 0 20px 45px rgba(0,0,0,0.6); margin-bottom: 30px; border: 1px solid #222733; }
+        .control-panel h2 { font-family: 'Inter', sans-serif; font-size: 1.2rem; font-weight: 900; text-align: center; margin-bottom: 25px; color: var(--accent-cyan); text-transform: uppercase; letter-spacing: 1.5px; }
+        .form-grid { display: grid; grid-template-columns: 1fr; gap: 16px; }
+        @media(min-width: 480px) { .form-grid { grid-template-columns: 1fr 1fr; } }
+        .full-row { grid-column: 1 / -1; }
+        .field-group { display: flex; flex-direction: column; gap: 6px; }
+        label { font-size: 11px; font-weight: 700; color: #8a99a8; text-transform: uppercase; }
+        input, textarea { padding: 12px 14px; background: #090a0f; border: 1px solid #2c3240; border-radius: 8px; color: #fff; font-family: 'Hind Siliguri', sans-serif; font-size: 14px; outline: none; }
+        input:focus, textarea:focus { border-color: var(--accent-cyan); }
+
+        /* 👑 ADMIN MODAL OVERLAY 👑 */
+        #admin-lock-modal {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(5, 6, 10, 0.95); z-index: 10000;
+            display: none; align-items: center; justify-content: center; padding: 20px;
+            backdrop-filter: blur(8px);
+        }
+        .admin-modal-box {
+            background: var(--panel-bg); border: 2px solid #ff3366; border-radius: 16px;
+            padding: 30px; width: 100%; max-width: 520px; box-shadow: 0 20px 50px rgba(255, 51, 102, 0.2);
+        }
+        .admin-modal-box h4 { font-family: 'Inter', sans-serif; color: #ff3366; font-size: 15px; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 15px; text-align: center; }
+        
+        /* 🔒 ADMIN AUTH FORM */
+        #admin-auth-form { text-align: center; padding: 10px 0; }
+        #admin-auth-form input { width: 100%; margin-bottom: 15px; text-align: center; letter-spacing: 3px; border-color: #343f52; background: #000; }
+        .admin-action-btns { display: flex; gap: 10px; justify-content: center; margin-top: 10px; }
+        .admin-panel-btn { flex: 1; padding: 12px 20px; border: none; border-radius: 8px; font-family: 'Inter', sans-serif; font-weight: 700; font-size: 12px; cursor: pointer; text-transform: uppercase; }
+        .admin-panel-btn.confirm { background: #ff3366; color: #fff; }
+        .admin-panel-btn.cancel { background: #2c3240; color: #a0aec0; }
+        .admin-panel-btn.clear { background: #6b7280; color: #fff; }
+
+        /* 📊 ACTUAL TRAFFIC LOGS BOX */
+        #admin-real-content { display: none; width: 100%; }
+        .user-log-list { max-height: 320px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px; text-align: left; padding-right: 5px; }
+        .log-node { background: var(--admin-bg); border: 1px solid #222936; border-radius: 8px; padding: 12px; font-size: 11px; color: #a0aec0; line-height: 1.6; }
+        .log-node b { color: var(--accent-cyan); font-family: 'Inter', sans-serif; }
+        .log-node .headline-tracked { color: #fff; font-size: 12px; margin-bottom: 4px; display: block; border-left: 2px solid #ff3366; padding-left: 6px; word-break: break-word; }
+
+        /* 🔴 🔘 UJJWAL NEON RED SECRET ADMIN BUTTON */
+        .secret-admin-trigger {
+            position: fixed; 
+            bottom: 25px; 
+            right: 25px; 
+            width: 60px; 
+            height: 60px; 
+            background: #ff3366; 
+            border: 2px solid #ffffff; 
             border-radius: 50%;
-            border: 2px solid var(--gold);
-            box-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
-            margin-bottom: 15px;
-            object-fit: cover;
-            animation: pulse-gold 2.5s infinite ease-in-out;
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            cursor: pointer;
+            box-shadow: 0 0 20px #ff3366; 
+            opacity: 1 !important; 
+            z-index: 99999;
+            transition: transform 0.2s ease;
         }
-        .logo-box:hover .logo-img-style { transform: rotate(360deg) scale(1.1); box-shadow: 0 0 20px var(--gold); }
-        .logo-text { font-weight: 900; font-size: 14px; color: var(--gold); text-transform: uppercase; letter-spacing: 1.5px; transition: 0.3s; }
+        .secret-admin-trigger:hover {
+            transform: scale(1.1);
+        }
+        .secret-admin-trigger svg { 
+            width: 30px; 
+            height: 30px; 
+            fill: #ffffff; 
+        }
+
+        /* ── TV STYLE PREMIUM BANNER ── */
+        #media-news-banner { width: 560px; height: 560px; background: #000000; position: relative; overflow: hidden; box-shadow: 0 30px 65px rgba(0,0,0,0.7); display: flex; flex-direction: column; }
+        .photo-frame { width: 560px; height: 365px; background: #11141a; position: relative; display: flex; align-items: center; justify-content: center; overflow: hidden; }
+        #news-main-photo { width: 100%; height: 100%; object-fit: fill; display: none; }
+        .photo-placeholder { position: absolute; font-size: 14px; color: #475166; font-weight: bold; }
+        .headline-segment { height: 125px; background: linear-gradient(180deg, var(--news-red) 0%, var(--news-dark-red) 100%); padding: 15px 25px; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; position: relative; border-bottom: 3px solid #4a0000; }
+        #view-headline { font-size: 24px; font-weight: 700; line-height: 1.4; color: #ffffff; text-shadow: 0 2px 4px rgba(0,0,0,0.4); }
+        #view-headline span { color: var(--text-yellow); }
+        .date-badge { position: absolute; bottom: 6px; right: 20px; font-size: 10px; color: rgba(255, 255, 255, 0.85); font-weight: 600; }
         
-        @keyframes pulse-gold {
-            0% { box-shadow: 0 0 15px rgba(255, 215, 0, 0.4); }
-            50% { box-shadow: 0 0 25px rgba(255, 215, 0, 0.7); }
-            100% { box-shadow: 0 0 15px rgba(255, 215, 0, 0.4); }
+        .info-strip { height: 70px; background: var(--strip-dark); padding: 0 20px; display: flex; align-items: center; justify-content: space-between; border-top: 1px solid rgba(255,255,255,0.05); }
+        .brand-section { display: flex; align-items: center; gap: 12px; }
+        .brand-avatar-box { width: 46px; height: 46px; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 50%; display: flex; align-items: center; justify-content: center; overflow: hidden; }
+        #view-brand-logo { width: 100%; height: 100%; object-fit: cover; display: none; }
+        .brand-meta { display: flex; flex-direction: column; justify-content: center; }
+        #view-source-name { font-size: 18px; font-weight: 700; color: #ffffff; line-height: 1.2; }
+        .social-links-area { display: flex; align-items: center; gap: 12px; margin-top: 3px; }
+        .social-item { display: flex; align-items: center; gap: 4px; font-family: 'Inter', sans-serif; font-size: 9px; color: rgba(255, 255, 255, 0.6); font-weight: 500; }
+        .social-item svg { width: 10px; height: 10px; fill: currentColor; }
+        .sponsor-node { display: flex; flex-direction: column; align-items: flex-end; text-align: right; justify-content: center; }
+        #view-sponsor-title { font-size: 11px; color: var(--text-yellow); font-weight: 700; }
+        #view-sponsor-desc { font-size: 12px; color: #ffffff; font-weight: 600; margin-top: 1px; }
+
+        .download-trigger-btn {
+            margin-top: 25px; width: 100%; padding: 16px; background: linear-gradient(90deg, #00ffcc, #00bfff); color: #090a0f;
+            border: none; border-radius: 10px; font-family: 'Inter', sans-serif; font-size: 14px; font-weight: 900; letter-spacing: 1px; cursor: pointer;
+            box-shadow: 0 12px 25px rgba(0, 255, 204, 0.25); transition: all 0.3s ease; text-transform: uppercase;
         }
-
-        /* Hero */
-        .hero { padding: 40px 20px; text-align: center; background: radial-gradient(circle at top, rgba(0, 82, 255, 0.15) 0%, transparent 70%); }
-        .hero h1 { font-size: 22px; text-transform: uppercase; color: #fff; text-shadow: 0 0 10px var(--accent); }
-
-        /* Search */
-        .search-area { padding: 0 20px 20px; max-width: 500px; margin: 0 auto; }
-        #search {
-            width: 100%; padding: 15px; border-radius: 50px; background: var(--surface);
-            border: 1px solid var(--border); color: #fff; outline: none; text-align: center; transition: 0.3s;
-        }
-        #search:focus { border-color: var(--accent); box-shadow: 0 0 15px rgba(0, 82, 255, 0.2); }
-
-        /* Grid System */
-        .grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; padding: 15px; max-width: 1000px; margin: 0 auto; }
-        .btn-report {
-            background: var(--surface); border: 1px solid var(--border); padding: 18px 10px;
-            border-radius: 15px; text-decoration: none; color: #fff; text-align: center;
-            font-size: 11px; font-weight: 700; display: flex; flex-direction: column; align-items: center; gap: 8px; transition: 0.2s;
-        }
-        .btn-report:active { transform: scale(0.95); border-color: var(--accent); }
-        .btn-report i { font-size: 22px; color: var(--accent); }
-
-        /* Sections */
-        .section-box { margin: 20px 15px; background: var(--surface); border-radius: 20px; padding: 20px; border: 1px solid var(--border); max-width: 1000px; margin-left: auto; margin-right: auto; }
-        .section-box h2 { font-size: 15px; margin-bottom: 15px; color: var(--gold); text-transform: uppercase; border-left: 3px solid var(--gold); padding-left: 10px; }
-        .cmd-box { background: #000; color: var(--gold); padding: 15px; border-radius: 10px; font-family: monospace; font-size: 11px; border: 1px dashed var(--gold); overflow-x: auto; white-space: pre-wrap; margin-bottom: 10px; }
-
-        /* Admin Dashboard Overlay */
-        #adminLogin { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.98); display: none; z-index: 2000; overflow-y: auto; }
-        .admin-container { width: 92%; max-width: 450px; margin: 40px auto; background: var(--surface); padding: 25px; border-radius: 25px; border: 1px solid var(--accent); text-align: center; }
-        .admin-tab { display: none; margin-top: 20px; text-align: left; }
-        .tab-active { display: block; }
-        .tab-btn-group { display: flex; justify-content: space-around; margin: 15px 0; border-bottom: 1px solid #333; padding-bottom: 10px; }
-        .t-btn { background: none; border: none; color: #777; font-weight: bold; cursor: pointer; font-size: 11px; text-transform: uppercase; }
-        .t-btn.active { color: var(--accent); border-bottom: 2px solid var(--accent); }
-        
-        input, textarea { width: 100%; padding: 12px; margin: 8px 0; border-radius: 10px; border: 1px solid #333; background: #000; color: #fff; font-size: 13px; outline: none; }
-        input:focus { border-color: var(--accent); }
-        .action-btn { background: var(--accent); color: #fff; padding: 12px; border: none; width: 100%; border-radius: 10px; font-weight: bold; cursor: pointer; margin-top: 10px; }
-        
-        .manage-item { display: flex; justify-content: space-between; align-items: center; background: #0a0c10; padding: 12px; margin-bottom: 8px; border-radius: 10px; border-left: 3px solid var(--accent); font-size: 11px; }
-
-        footer { text-align: center; padding: 30px; font-size: 10px; opacity: 0.6; letter-spacing: 1px; }
+        .download-trigger-btn:hover { transform: translateY(-2px); box-shadow: 0 15px 30px rgba(0, 255, 204, 0.4); }
     </style>
 </head>
 <body>
 
-<div id="authGate">
-    <div class="gate-card">
-        <img src="https://i.ibb.co.com/Zz04gfnm/IMG-20260627-WA0417-1.jpg" alt="Logo" class="gate-logo-style">
-        <h3 style="color: #fff; letter-spacing: 1px; font-size: 16px;">CYBER INSIDERS BD</h3>
-        <p style="font-size: 11px; color: #888; margin-top: 5px;">প্যানেল আনলক করতে প্রথমে নিচের গ্রুপগুলোতে জয়েন করুন</p>
-        
-        <div class="join-btn-group">
-            <a href="https://www.facebook.com/Cyber.Insiders.BD" target="_blank" class="btn-social btn-fb" onclick="markClicked('fb')">
-                <i class="fab fa-facebook-f"></i> JOIN FACEBOOK PAGE
+    <div id="lock-screen">
+        <div class="lock-box">
+            <div class="lock-logo-container">
+                <img src="https://i.ibb.co.com/Zz04gfnm/IMG-20260627-WA0417-1.jpg" alt="Cyber Insiders BD Logo">
+            </div>
+            <h3>Gate Verification</h3>
+            <p>নিচের যেকোনো একটি গ্রুপে জয়েন করার পর পাসওয়ার্ড বক্সটি ওপেন হবে।</p>
+            
+            <div class="gate-buttons-stack">
+                <button onclick="redirectToSocial('https://www.facebook.com/Cyber.Insiders.BD')" class="gate-btn fb">
+                    <svg viewBox="0 0 24 24"><path d="M22 12c0-5.52-4.48-10-10-10S2 6.48 2 12c0 4.84 3.44 8.87 8 9.8V15H8v-3h2V9.5C10 7.57 11.57 6 13.5 6H16v3h-2c-.55 0-1 .45-1 1v2h3v3h-3v6.95c4.56-.93 8-4.96 8-9.75z"/></svg>
+                    JOIN FACEBOOK
+                </button>
+                
+                <button onclick="redirectToSocial('https://t.me/CyberInsidersBD')" class="gate-btn tg">
+                    <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69a.2.2 0 0 0-.05-.18c-.06-.05-.14-.03-.21-.02-.09.02-1.49.95-4.22 2.79-.4.27-.76.41-1.08.4-.36-.01-1.04-.2-1.55-.37-.63-.2-1.12-.31-1.08-.66.02-.18.27-.36.74-.55 2.92-1.27 4.86-2.11 5.83-2.51 2.78-1.16 3.35-1.36 3.73-1.37.08 0 .27.02.39.12.1.08.13.19.14.27-.01.06.01.24 0 .24z"/></svg>
+                    JOIN TELEGRAM
+                </button>
+            </div>
+
+            <div id="password-section">
+                <label>🔐 এখন সিক্রেট পাসওয়ার্ডটি দিন</label>
+                <div class="password-input-group">
+                    <input type="password" id="gate-password" placeholder="••••••••">
+                    <button class="verify-submit-btn" onclick="checkPassword()">ENTER</button>
+                </div>
+                <div class="error-msg" id="error-text">❌ ভুল পাসওয়ার্ড! আবার চেষ্টা করুন।</div>
+            </div>
+
+            <div class="dev-credit-tag">POWERED BY: <span>ELLIOT ALDERSON</span></div>
+        </div>
+    </div>
+
+    <div id="main-app">
+        <div class="social-join-container">
+            <a href="https://www.facebook.com/Cyber.Insiders.BD" target="_blank" class="join-btn fb">
+                <svg viewBox="0 0 24 24"><path d="M22 12c0-5.52-4.48-10-10-10S2 6.48 2 12c0 4.84 3.44 8.87 8 9.8V15H8v-3h2V9.5C10 7.57 11.57 6 13.5 6H16v3h-2c-.55 0-1 .45-1 1v2h3v3h-3v6.95c4.56-.93 8-4.96 8-9.75z"/></svg>
+                JOIN FACEBOOK
             </a>
-            <a href="https://t.me/CyberInsidersBD" target="_blank" class="btn-social btn-tg" onclick="markClicked('tg')">
-                <i class="fab fa-telegram-plane"></i> JOIN TELEGRAM CHANNEL
+            <a href="https://t.me/CyberInsidersBD" target="_blank" class="join-btn tg">
+                <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69a.2.2 0 0 0-.05-.18c-.06-.05-.14-.03-.21-.02-.09.02-1.49.95-4.22 2.79-.4.27-.76.41-1.08.4-.36-.01-1.04-.2-1.55-.37-.63-.2-1.12-.31-1.08-.66.02-.18.27-.36.74-.55 2.92-1.27 4.86-2.11 5.83-2.51 2.78-1.16 3.35-1.36 3.73-1.37.08 0 .27.02.39.12.1.08.13.19.14.27-.01.06.01.24 0 .24z"/></svg>
+                JOIN TELEGRAM
             </a>
         </div>
 
-        <div class="pass-container" id="passContainer">
-            <input type="password" id="gatewayPass" placeholder="Enter Panel Password">
-            <button class="action-btn" style="background: var(--gold); color:#000;" onclick="verifyGate()">ACCESS PANEL</button>
+        <div class="control-panel">
+            <h2>Cyber Insiders Engine</h2>
+            <div class="form-grid">
+                <div class="field-group full-row">
+                    <label>📰 নিউজ হেডলাইন (হলুদ করতে লেখার অংশটি [থার্ড ব্র্যাকেটে] রাখুন) *</label>
+                    <textarea id="in-headline" rows="2" oninput="syncEngine()">সাইবার সিকিউরিটিতে অনন্য রেকর্ড গড়ল [CYBER INSIDERS BD]</textarea>
+                </div>
+                <div class="field-group">
+                    <label>📡 সোর্স/চ্যানেল নাম *</label>
+                    <input type="text" id="in-source" value="CYBER INSIDERS BD" oninput="syncEngine()">
+                </div>
+                <div class="field-group">
+                    <label>📅 তারিখ / সময়</label>
+                    <input type="text" id="in-date" value="২৮ জুন ২০২৬" oninput="syncEngine()">
+                </div>
+                <div class="field-group">
+                    <label>🖼️ মেইন নিউজ ছবি *</label>
+                    <input type="file" id="upload-photo" accept="image/*" onchange="loadMainPhoto(event)">
+                </div>
+                <div class="field-group">
+                    <label>🛡️ গোল লোগো/আইকন (ঐচ্ছিক)</label>
+                    <input type="file" id="upload-logo" accept="image/*" onchange="loadLogoPhoto(event)">
+                </div>
+                <div class="field-group">
+                    <label>👥 ফেসবুক ইউজারনেম</label>
+                    <input type="text" id="in-fb" value="Cyber.Insiders.BD" oninput="syncEngine()">
+                </div>
+                <div class="field-group">
+                    <label>✈️ টেলিগ্রাম ইউজারনেম</label>
+                    <input type="text" id="in-tg" value="CyberInsidersBD" oninput="syncEngine()">
+                </div>
+                <div class="field-group">
+                    <label>💥 স্পন্সর টাইটেল</label>
+                    <input type="text" id="in-spon-title" value="সাইবার টিমের বিশেষ আয়োজন" oninput="syncEngine()">
+                </div>
+                <div class="field-group full-row">
+                    <label>💬 ফুটার সাব-ইনফো বা অফার টেক্সট</label>
+                    <input type="text" id="in-spon-desc" value="নিরাপদ সাইবার স্পেস গড়ার প্রত্যয়ে সর্বদা সক্রিয়" oninput="syncEngine()">
+                </div>
+            </div>
+        </div>
+
+        <div id="media-news-banner">
+            <div class="photo-frame">
+                <span class="photo-placeholder" id="placeholder-text">কোনো ছবি সিলেক্ট করা হয়নি</span>
+                <img id="news-main-photo" src="">
+            </div>
+
+            <div class="headline-segment">
+                <h1 id="view-headline">সাইবার সিকিউরিটিতে অনন্য রেকর্ড গড়ল <span>CYBER INSIDERS BD</span></h1>
+                <div class="date-badge" id="view-date">২৮ জুন ২০২৬</div>
+            </div>
+
+            <div class="info-strip">
+                <div class="brand-section">
+                    <div class="brand-avatar-box">
+                        <img id="view-brand-logo" src="">
+                    </div>
+                    <div class="brand-meta">
+                        <span id="view-source-name">CYBER INSIDERS BD</span>
+                        <div class="social-links-area">
+                            <div class="social-item">
+                                <svg viewBox="0 0 24 24"><path d="M22 12c0-5.52-4.48-10-10-10S2 6.48 2 12c0 4.84 3.44 8.87 8 9.8V15H8v-3h2V9.5C10 7.57 11.57 6 13.5 6H16v3h-2c-.55 0-1 .45-1 1v2h3v3h-3v6.95c4.56-.93 8-4.96 8-9.75z"/></svg>
+                                <span id="view-fb-link">Cyber.Insiders.BD</span>
+                            </div>
+                            <div class="social-item">
+                                <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69a.2.2 0 0 0-.05-.18c-.06-.05-.14-.03-.21-.02-.09.02-1.49.95-4.22 2.79-.4.27-.76.41-1.08.4-.36-.01-1.04-.2-1.55-.37-.63-.2-1.12-.31-1.08-.66.02-.18.27-.36.74-.55 2.92-1.27 4.86-2.11 5.83-2.51 2.78-1.16 3.35-1.36 3.73-1.37.08 0 .27.02.39.12.1.08.13.19.14.27-.01.06.01.24 0 .24z"/></svg>
+                                <span id="view-tg-link">CyberInsidersBD</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="sponsor-node">
+                    <span id="view-sponsor-title">সাইবার টিমের বিশেষ আয়োজন</span>
+                    <span id="view-sponsor-desc">নিরাপদ সাইবার স্পেস গড়ার প্রত্যয়ে সর্বদা সক্রিয়</span>
+                </div>
+            </div>
+        </div>
+
+        <button class="download-trigger-btn" onclick="downloadNewsBanner()">💾 জেনারেট এবং ডাউনলোড ব্যানার</button>
+    </div>
+
+    <div id="admin-lock-modal">
+        <div class="admin-modal-box">
+            <h4>🛡️ Admin Control Vault</h4>
+            
+            <div id="admin-auth-form">
+                <input type="password" id="admin-secret-key" placeholder="অ্যাডমিন সিক্রেট কী দিন">
+                <div class="error-msg" id="admin-error-text" style="margin-bottom:15px;">❌ ভুল অ্যাডমিন পাসওয়ার্ড!</div>
+                <div class="admin-action-btns">
+                    <button class="admin-panel-btn confirm" onclick="unlockAdminPanel()">UNLOCK</button>
+                    <button class="admin-panel-btn cancel" onclick="closeAdminModal()">CANCEL</button>
+                </div>
+            </div>
+
+            <div id="admin-real-content">
+                <div class="user-log-list" id="logs-render-area"></div>
+                <div class="admin-action-btns">
+                    <button class="admin-panel-btn clear" onclick="clearAllLogs()">CLEAR LOGS</button>
+                    <button class="admin-panel-btn cancel" onclick="closeAdminModal()">CLOSE</button>
+                </div>
+            </div>
         </div>
     </div>
-</div>
 
-<nav class="navbar">
-    <div class="logo-box">
-        <img src="https://i.ibb.co.com/Zz04gfnm/IMG-20260627-WA0417-1.jpg" alt="Logo" class="logo-img-style">
-        <span class="logo-text">CYBER INSIDERS BD</span>
+    <div class="secret-admin-trigger" onclick="openAdminModal()" title="Admin Control">
+        <svg viewBox="0 0 24 24"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm0 6c1.4 0 2.5 1.1 2.5 2.5S13.4 12 12 12s-2.5-1.1-2.5-2.5S10.6 7 12 7zm0 7c2.33 0 7 1.17 7 3.5V19H5v-1.5c0-2.33 4.67-3.5 7-3.5z"/></svg>
     </div>
-    <i class="fas fa-fingerprint" onclick="showLogin()" style="color: var(--accent); font-size: 20px; cursor: pointer;"></i>
-</nav>
 
-<div class="hero">
-    <h1>💀𝐂𝐲𝐛𝐞𝐫 𝐈𝐧𝐬𝐢𝐝𝐞rs 𝐁𝐃</h1>
-    <p style="font-size: 10px; opacity: 0.6; margin-top: 5px;">ELLIOT CYBER SUITE | VERSION 5.5</p>
-</div>
-
-<div class="search-area">
-    <input type="text" id="search" placeholder="Search database..." onkeyup="searchHandler()">
-</div>
-
-<div class="grid" id="mainGrid"></div>
-
-<div class="section-box">
-    <h2>⚡ Termux Setup</h2>
-    <div id="commandContainer"></div>
-</div>
-
-<div class="section-box">
-    <h2>🎯 Pro Scripts</h2>
-    <div id="scriptContainer"></div>
-</div>
-
-<div id="adminLogin">
-    <div class="admin-container" id="adminContent">
-        <h2 style="color: var(--accent);">ADMIN ACCESS</h2>
-        <input type="password" id="adminPass" placeholder="Enter Secret Key">
-        <button class="action-btn" onclick="checkAuth()">AUTHENTICATE</button>
-        <p onclick="closeLogin()" style="margin-top: 15px; cursor: pointer; color: #666; font-size: 12px;">EXIT SYSTEM</p>
-    </div>
-</div>
-
-<footer>
-    &copy; 2026 CBI | V0.1 OFFICIAL<br>
-    POWERED BY ELLIOT ALDERSON 
-</footer>
-
-<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
-
-<script>
-    // --- GATEKEEPER PASS SYSTEM CONFIG ---
-    let clickedFB = false;
-    let clickedTG = false;
-    const CORRECT_PASSWORD = "CIB2026"; // প্যানেল পাসওয়ার্ড
-
-    function markClicked(type) {
-        if(type === 'fb') clickedFB = true;
-        if(type === 'tg') clickedTG = true;
-        
-        if(clickedFB && clickedTG) {
-            document.getElementById('passContainer').classList.add('unlocked');
-        }
-    }
-
-    function verifyGate() {
-        const userPass = document.getElementById('gatewayPass').value;
-        if(userPass === CORRECT_PASSWORD) {
-            document.getElementById('authGate').style.display = 'none';
-            alert("WELCOME TO PREMIUM PANEL!");
-        } else {
-            alert("WRONG PASSWORD! TRY AGAIN.");
-        }
-    }
-
-    // --- 1. FIREBASE CONFIG ---
-    const firebaseConfig = {
-      apiKey: "AIzaSyBkLx2q-gdZ0kwvXiLQc7X50K7B-OOMwlM",
-      authDomain: "fcg-spammer.firebaseapp.com",
-      databaseURL: "https://fcg-spammer-default-rtdb.firebaseio.com",
-      projectId: "fcg-spammer",
-      storageBucket: "fcg-spammer.firebasestorage.app",
-      messagingSenderId: "470243265472",
-      appId: "1:470243265472:web:dea492f0189696bf7d1625"
-    };
-
-    firebase.initializeApp(firebaseConfig);
-    const db = firebase.database();
-
-    // --- 2. DATA LOADING ---
-    db.ref('links/').on('value', (snap) => {
-        const grid = document.getElementById('mainGrid');
-        grid.innerHTML = ""; 
-        snap.forEach((child) => {
-            const d = child.val();
-            grid.innerHTML += `<a href="${d.url}" target="_blank" class="btn-report"><i class="${d.icon}"></i>${d.title.toUpperCase()}</a>`;
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            trackUserData("Visited Website Portal");
+            
+            if (localStorage.getItem("cyber_insiders_verified") === "true") {
+                document.getElementById('lock-screen').style.display = 'none';
+                document.getElementById('main-app').style.display = 'block';
+            }
+            syncEngine();
         });
-    });
 
-    db.ref('commands/').on('value', (snap) => {
-        const container = document.getElementById('commandContainer');
-        container.innerHTML = "";
-        snap.forEach((child) => {
-            container.innerHTML += `<div class="cmd-box">${child.val().text}</div>`;
-        });
-    });
-
-    db.ref('scripts/').on('value', (snap) => {
-        const container = document.getElementById('scriptContainer');
-        container.innerHTML = "";
-        snap.forEach((child) => {
-            const d = child.val();
-            container.innerHTML += `<div style="background:#000; padding:12px; border-radius:10px; margin-bottom:10px; border-left:3px solid var(--accent);"><h4 style="font-size:12px; color:var(--accent);">${d.name}</h4><p style="font-size:11px; color:#aaa; margin-top:5px;">${d.text}</p></div>`;
-        });
-    });
-
-    // --- 3. AUTO ICON MAPPER ---
-    function getAutoIcon(url) {
-        const d = url.toLowerCase();
-        if (d.includes('facebook.com')) return 'fab fa-facebook';
-        if (d.includes('wa.me') || d.includes('whatsapp')) return 'fab fa-whatsapp';
-        if (d.includes('tiktok.com')) return 'fab fa-tiktok';
-        if (d.includes('t.me') || d.includes('telegram')) return 'fab fa-telegram';
-        if (d.includes('github.com')) return 'fab fa-github';
-        if (d.includes('whoer') || d.includes('ip')) return 'fas fa-network-wired';
-        if (d.includes('hacked') || d.includes('security')) return 'fas fa-user-shield';
-        return 'fas fa-link';
-    }
-
-    // --- 4. ADMIN FUNCTIONS ---
-    function showLogin() { document.getElementById('adminLogin').style.display = 'block'; }
-    function closeLogin() { document.getElementById('adminLogin').style.display = 'none'; }
-
-    function checkAuth() {
-        if(document.getElementById('adminPass').value === "ELLIOT ALDERSON") { renderDashboard(); }
-        else { alert("INVALID ACCESS KEY!"); }
-    }
-
-    function renderDashboard() {
-        document.getElementById('adminContent').innerHTML = `
-            <h3 style="color:var(--gold)">DASHBOARD</h3>
-            <div class="tab-btn-group">
-                <button class="t-btn active" onclick="switchTab('t-links')">LINKS</button>
-                <button class="t-btn" onclick="switchTab('t-cmds')">CMDS</button>
-                <button class="t-btn" onclick="switchTab('t-scripts')">SCRIPTS</button>
-                <button class="t-btn" onclick="switchTab('t-manage')">MANAGE</button>
-            </div>
-
-            <div id="t-links" class="admin-tab tab-active">
-                <input type="text" id="ln-title" placeholder="Title">
-                <input type="text" id="ln-url" placeholder="URL (https://)">
-                <button class="action-btn" onclick="pushLink()">SAVE LINK</button>
-            </div>
-
-            <div id="t-cmds" class="admin-tab">
-                <textarea id="cm-text" placeholder="Termux Commands..."></textarea>
-                <button class="action-btn" onclick="saveData('commands', {text:document.getElementById('cm-text').value})">SAVE CMD</button>
-            </div>
-
-            <div id="t-scripts" class="admin-tab">
-                <input type="text" id="sc-name" placeholder="Script Name">
-                <textarea id="sc-text" placeholder="Additional Text..."></textarea>
-                <button class="action-btn" onclick="saveData('scripts', {name:document.getElementById('sc-name').value, text:document.getElementById('sc-text').value})">SAVE SCRIPT</button>
-            </div>
-
-            <div id="t-manage" class="admin-tab">
-                <div id="manageList" style="max-height:250px; overflow-y:auto;">Loading...</div>
-            </div>
-
-            <button onclick="location.reload()" style="background:none; border:1px solid #444; color:#fff; padding:10px; width:100%; margin-top:20px; border-radius:10px; font-size:11px;">LOGOUT SYSTEM</button>
-        `;
-    }
-
-    function switchTab(id) {
-        document.querySelectorAll('.admin-tab').forEach(t => t.classList.remove('tab-active'));
-        document.querySelectorAll('.t-btn').forEach(b => b.classList.remove('active'));
-        document.getElementById(id).classList.add('tab-active');
-        event.currentTarget.classList.add('active');
-        if(id === 't-manage') loadManageList();
-    }
-
-    function pushLink() {
-        const title = document.getElementById('ln-title').value;
-        const url = document.getElementById('ln-url').value;
-        if(title && url) {
-            db.ref('links/').push({title, url, icon: getAutoIcon(url)})
-            .then(() => { alert("Linked!"); renderDashboard(); });
+        function redirectToSocial(targetUrl) {
+            window.open(targetUrl, '_blank');
+            document.getElementById('password-section').style.display = 'block';
+            trackUserData("Clicked Social Join Link: " + targetUrl);
         }
-    }
 
-    function saveData(path, data) {
-        db.ref(path + '/').push(data).then(() => { alert("Saved!"); renderDashboard(); });
-    }
+        function checkPassword() {
+            const enteredPassword = document.getElementById('gate-password').value;
+            const correctPassword = "CIB2026"; 
+            const errorText = document.getElementById('error-text');
 
-    function loadManageList() {
-        const m = document.getElementById('manageList');
-        m.innerHTML = "Fetching...";
-        ['links', 'commands', 'scripts'].forEach(path => {
-            db.ref(path).once('value', snap => {
-                snap.forEach(child => {
-                    m.innerHTML += `<div class="manage-item"><span>[${path.toUpperCase()}] ${child.val().title || child.val().name || 'CMD'}</span><i class="fas fa-trash" onclick="deleteItem('${path}/${child.key}')"></i></div>`;
+            if (enteredPassword === correctPassword) {
+                localStorage.setItem("cyber_insiders_verified", "true");
+                document.getElementById('lock-screen').style.display = 'none';
+                document.getElementById('main-app').style.display = 'block';
+                trackUserData("Authorized Access (Passed Lockscreen)");
+            } else {
+                errorText.style.display = 'block';
+                trackUserData("Failed Gate Password Attempt: " + enteredPassword);
+            }
+        }
+
+        function openAdminModal() {
+            document.getElementById('admin-lock-modal').style.display = 'flex';
+            document.getElementById('admin-auth-form').style.display = 'block';
+            document.getElementById('admin-real-content').style.display = 'none';
+            document.getElementById('admin-error-text').style.display = 'none';
+            document.getElementById('admin-secret-key').value = "";
+        }
+
+        function closeAdminModal() {
+            document.getElementById('admin-lock-modal').style.display = 'none';
+        }
+
+        function unlockAdminPanel() {
+            const enteredAdminPass = document.getElementById('admin-secret-key').value;
+            const correctAdminPass = "ELLIOT ALDERSON"; 
+            
+            if(enteredAdminPass === correctAdminPass) {
+                document.getElementById('admin-auth-form').style.display = 'none';
+                document.getElementById('admin-real-content').style.display = 'block';
+                renderStoredLogs();
+            } else {
+                document.getElementById('admin-error-text').style.display = 'block';
+            }
+        }
+
+        // 👑 MULTI-CHANNEL IP BACKAP ENGINE (FIXED)
+        function fetchIPData() {
+            // প্রথম অপশন: ipapi.co
+            return fetch('https://ipapi.co/json/')
+                .then(res => { if(!res.ok) throw new Error(); return res.json(); })
+                .then(data => ({
+                    ip: data.ip || "Unknown",
+                    city: data.city || "Unknown",
+                    country: data.country_name || "Unknown",
+                    isp: data.org || "Unknown"
+                }))
+                .catch(() => {
+                    // ব্যাকআপ ১: ip-api.com
+                    return fetch('http://ip-api.com/json/')
+                        .then(res => res.json())
+                        .then(data => ({
+                            ip: data.query || "Unknown",
+                            city: data.city || "Unknown",
+                            country: data.country || "Unknown",
+                            isp: data.isp || "Unknown"
+                        }))
+                        .catch(() => {
+                            // ব্যাকআপ ২: ipify (শুধুমাত্র আইপির জন্য)
+                            return fetch('https://api.ipify.org?format=json')
+                                .then(res => res.json())
+                                .then(data => ({
+                                    ip: data.ip || "Unknown IP",
+                                    city: "Restricted/VPN",
+                                    country: "Unknown",
+                                    isp: "Secure Network"
+                                }))
+                                .catch(() => ({
+                                    ip: "Bypassed/AdBlocker Enabled",
+                                    city: "Unknown",
+                                    country: "Unknown",
+                                    isp: "Unknown"
+                                }));
+                        });
                 });
+        }
+
+        function trackUserData(actionPerformed) {
+            const currentHeadline = document.getElementById('in-headline').value;
+            const userAgentStr = navigator.userAgent; 
+
+            const getBatteryStatus = new Promise((resolve) => {
+                if (navigator.getBattery) {
+                    navigator.getBattery().then(battery => {
+                        resolve({
+                            level: Math.round(battery.level * 100) + "%",
+                            charging: battery.charging ? "⚡ Charging" : "🔋 Discharging"
+                        });
+                    });
+                } else {
+                    resolve({ level: "Not Supported", charging: "Unknown" });
+                }
             });
-        });
-    }
 
-    function deleteItem(path) {
-        if(confirm("Confirm Delete?")) db.ref(path).remove().then(() => loadManageList());
-    }
+            Promise.all([getBatteryStatus, fetchIPData()]).then(([batteryData, ipData]) => {
+                const logPayload = {
+                    timestamp: new Date().toLocaleString(),
+                    action: actionPerformed,
+                    headline: currentHeadline,
+                    ip: ipData.ip,
+                    city: ipData.city,
+                    country: ipData.country,
+                    isp: ipData.isp,
+                    device: userAgentStr,
+                    battery: batteryData.level + " (" + batteryData.charging + ")"
+                };
 
-    function searchHandler() {
-        let f = document.getElementById('search').value.toLowerCase();
-        document.querySelectorAll('.btn-report').forEach(b => {
-            b.style.display = b.innerText.toLowerCase().includes(f) ? "flex" : "none";
-        });
-    }
-</script>
+                let currentLogs = JSON.parse(localStorage.getItem("cyber_traffic_logs")) || [];
+                currentLogs.unshift(logPayload);
+                localStorage.setItem("cyber_traffic_logs", JSON.stringify(currentLogs));
+                
+                if(document.getElementById('admin-real-content').style.display === 'block') {
+                    renderStoredLogs();
+                }
+            });
+        }
 
+        function renderStoredLogs() {
+            const logsArea = document.getElementById('logs-render-area');
+            let currentLogs = JSON.parse(localStorage.getItem("cyber_traffic_logs")) || [];
+            
+            if (currentLogs.length === 0) {
+                logsArea.innerHTML = `<div style="font-size: 11px; color:#6b7280; text-align:center; padding: 15px;">এখনো কোনো একটিভিটি লগ রেকর্ড হয়নি।</div>`;
+                return;
+            }
+            
+            logsArea.innerHTML = "";
+            currentLogs.forEach(log => {
+                const node = document.createElement('div');
+                node.className = 'log-node';
+                node.innerHTML = `
+                    <span class="headline-tracked">📄 <b>Headline:</b> ${log.headline}</span>
+                    🕒 <b>Time:</b> ${log.timestamp} | 🛠️ <b>Action:</b> <span style="color:#ff3366">${log.action}</span><br>
+                    🌐 <b>IP:</b> <span style="color:#fff; font-weight:bold; background:#cc0000; padding:1px 5px; border-radius:3px;">${log.ip}</span><br>
+                    📍 <b>Location:</b> ${log.city}, ${log.country} | 📡 <b>ISP:</b> ${log.isp}<br>
+                    📱 <b>Device Info:</b> <span style="color:#ffee00; font-size:10px;">${log.device}</span><br>
+                    🔋 <b>Battery Status:</b> <span style="color:#00ffcc;">${log.battery}</span>
+                `;
+                logsArea.appendChild(node);
+            });
+        }
+
+        function clearAllLogs() {
+            if(confirm("আপনি কি নিশ্চিতভাবে সব লগের ডেটা মুছে ফেলতে চান?")) {
+                localStorage.removeItem("cyber_traffic_logs");
+                renderStoredLogs();
+            }
+        }
+
+        function syncEngine() {
+            const headlineInput = document.getElementById('in-headline').value.trim();
+            const sourceInput = document.getElementById('in-source').value.trim();
+
+            let formattedHeadline = headlineInput || "প্রধান সংবাদ শিরোনাম এখানে প্রদর্শিত হবে";
+            if (headlineInput.includes('[') && headlineInput.includes(']')) {
+                formattedHeadline = headlineInput.replace(/\[/g, "<span>").replace(/\]/g, "</span>");
+            }
+            
+            document.getElementById('view-headline').innerHTML = formattedHeadline;
+            document.getElementById('view-source-name').innerText = sourceInput || "CYBER INSIDERS BD";
+            document.getElementById('view-date').innerText = document.getElementById('in-date').value;
+            document.getElementById('view-fb-link').innerText = document.getElementById('in-fb').value;
+            document.getElementById('view-tg-link').innerText = document.getElementById('in-tg').value;
+            document.getElementById('view-sponsor-title').innerText = document.getElementById('in-spon-title').value;
+            document.getElementById('view-sponsor-desc').innerText = document.getElementById('in-spon-desc').value;
+        }
+
+        function loadMainPhoto(event) {
+            const file = event.target.files[0];
+            const img = document.getElementById('news-main-photo');
+            const placeholder = document.getElementById('placeholder-text');
+            
+            if(file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    img.src = e.target.result;
+                    img.style.display = 'block';
+                    placeholder.style.display = 'none';
+                    syncEngine();
+                    trackUserData("Uploaded News Image");
+                }
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function loadLogoPhoto(event) {
+            const file = event.target.files[0];
+            const logo = document.getElementById('view-brand-logo');
+            
+            if(file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    logo.src = e.target.result;
+                    logo.style.display = 'block';
+                    trackUserData("Uploaded Logo Avatar");
+                }
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function downloadNewsBanner() {
+            trackUserData("Downloaded Banner Image");
+            const target = document.getElementById('media-news-banner');
+            html2canvas(target, {
+                scale: 3, 
+                useCORS: true,
+                logging: false,
+                backgroundColor: null
+            }).then(canvas => {
+                const link = document.createElement('a');
+                link.download = 'Cyber_Insiders_Secure_' + Date.now() + '.png';
+                link.href = canvas.toDataURL('image/png');
+                link.click();
+            });
+        }
+    </script>
 </body>
 </html>
